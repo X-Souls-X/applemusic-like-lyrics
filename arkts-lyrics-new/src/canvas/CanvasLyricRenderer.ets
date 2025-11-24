@@ -514,67 +514,6 @@ export class CanvasLyricRenderer {
   }
 
   /**
-   * 渲染顶部梯度模糊遮罩
-   * 🎵 创造歌词在顶部逐渐模糊消失的效果
-   * 使用多层渐变叠加模拟高斯模糊的视觉效果
-   * @param maskHeight 遮罩高度（默认为容器高度的25%）
-   * @param blurIntensity 模糊强度（0-1，默认0.8）
-   */
-  renderGradientBlurMask(maskHeight?: number, blurIntensity?: number): void {
-    if (!this.canvasCtx) {
-      return;
-    }
-
-    const ctx: CanvasRenderingContext2D = this.canvasCtx;
-    const width: number = this.renderContext.width;
-    const height: number = this.renderContext.height;
-
-    // 默认遮罩高度为容器高度的25%
-    const effectiveHeight: number = maskHeight !== undefined ? maskHeight : height * 0.25;
-    // 默认模糊强度0.8
-    const intensity: number = blurIntensity !== undefined ? blurIntensity : 0.8;
-
-    if (effectiveHeight <= 0) {
-      return;
-    }
-
-    ctx.save();
-
-    // 🎵 方案：使用多层半透明渐变叠加，模拟高斯模糊的柔和过渡
-    // 每层渐变使用不同的透明度和范围，叠加后形成平滑的模糊效果
-
-    // 第一层：主渐变层（覆盖整个遮罩区域）
-    const gradient1: CanvasGradient = ctx.createLinearGradient(0, 0, 0, effectiveHeight);
-    gradient1.addColorStop(0, `rgba(0, 0, 0, ${intensity})`);
-    gradient1.addColorStop(0.3, `rgba(0, 0, 0, ${intensity * 0.6})`);
-    gradient1.addColorStop(0.6, `rgba(0, 0, 0, ${intensity * 0.3})`);
-    gradient1.addColorStop(0.85, `rgba(0, 0, 0, ${intensity * 0.1})`);
-    gradient1.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-    ctx.fillStyle = gradient1;
-    ctx.fillRect(0, 0, width, effectiveHeight);
-
-    // 第二层：柔化层（在顶部添加额外的模糊效果）
-    const gradient2: CanvasGradient = ctx.createLinearGradient(0, 0, 0, effectiveHeight * 0.5);
-    gradient2.addColorStop(0, `rgba(0, 0, 0, ${intensity * 0.4})`);
-    gradient2.addColorStop(0.5, `rgba(0, 0, 0, ${intensity * 0.15})`);
-    gradient2.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-    ctx.fillStyle = gradient2;
-    ctx.fillRect(0, 0, width, effectiveHeight * 0.5);
-
-    // 第三层：边缘柔化（让过渡更加平滑）
-    const gradient3: CanvasGradient = ctx.createLinearGradient(0, 0, 0, effectiveHeight * 0.15);
-    gradient3.addColorStop(0, `rgba(0, 0, 0, ${intensity * 0.3})`);
-    gradient3.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-    ctx.fillStyle = gradient3;
-    ctx.fillRect(0, 0, width, effectiveHeight * 0.15);
-
-    ctx.restore();
-  }
-
-  /**
    * 渲染间奏动画
    * 🎵 三个圆点依次跳动的效果
    * @param positionY Y轴位置（行顶部）
