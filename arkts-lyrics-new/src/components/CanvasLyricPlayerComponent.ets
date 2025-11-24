@@ -267,6 +267,12 @@ export struct CanvasLyricPlayerComponent {
     // 恢复画布状态
     this.canvasContext.restore();
 
+    // 🎵 渲染顶部梯度模糊遮罩（固定在视口顶部，不受滚动影响）
+    // 仅在启用模糊效果时渲染
+    if (config.enableBlur) {
+      this.renderer!.renderGradientBlurMask();
+    }
+
     // 只在渲染0行时输出警告
     if (renderedCount === 0) {
       console.warn('[LyricPlayer] ⚠️ Rendered 0 lines (total:', lineStates.length, ')');

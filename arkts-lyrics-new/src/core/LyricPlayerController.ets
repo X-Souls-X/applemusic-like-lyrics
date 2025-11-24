@@ -401,31 +401,9 @@ export class LyricPlayerController {
       }
 
       // ========== 模糊效果 ==========
-      // 🎵 参考原版 base.ts calcLayout 的模糊计算逻辑
-      let blurLevel: number = 0;
-      if (this.config.enableBlur) {
-        if (state.isActive) {
-          // 激活行：不模糊
-          blurLevel = 0;
-        } else {
-          // 非激活行：基础模糊值为1
-          blurLevel = 1;
-          if (index < this.currentLineIndex) {
-            // 已播放的歌词：距离越远，模糊越大
-            blurLevel += Math.abs(this.currentLineIndex - index) + 1;
-          } else {
-            // 未播放的歌词：距离越远，模糊越大
-            blurLevel += Math.abs(index - this.currentLineIndex);
-          }
-        }
-      }
-      state.blurRadius = blurLevel;
-
-      // 📊 模糊调试日志（暂时禁用 - 模糊效果已禁用）
-      // if (oldBlurRadius !== blurLevel && state.line.words.length > 0) {
-      //   const lineText: string = state.line.words.map(w => w.word).join('').substring(0, 10);
-      //   console.info(`[模糊] 行${index} "${lineText}..." | blurLevel: ${oldBlurRadius} → ${blurLevel}`);
-      // }
+      // 🎵 已改为使用顶部梯度模糊遮罩，不再逐行计算模糊
+      // 模糊遮罩由 CanvasLyricRenderer.renderGradientBlurMask() 统一处理
+      state.blurRadius = 0;
 
       // ========== 行级 Y 偏移（保留用于未来扩展）==========
       // 注意：逐字抬升效果已移至 CanvasLyricRenderer.renderWord() 中实现
